@@ -1,0 +1,35 @@
+TARGET := testjnb
+CC := g++
+
+SRC_DIR   = src
+OBJ_DIR   = testobj
+BIN_DIR   = bin
+
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
+SOURCES := $(filter-out $(wildcard $(SRC_DIR)/main.cpp), $(SOURCES))
+OBJECTS := $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+
+INCLUDE_DIR = -Iinclude
+LIBRARY_DIR = lib
+LIBRARIES = -lgtest -lopencv_core -lopencv_highgui -lopencv_imgproc
+LD_FLAGS = -O2 
+
+$(BIN_DIR)/$(TARGET): $(OBJECTS)
+	@$(CC) -o $@ $(LD_FLAGS) $(LD_FLAGS) -L$(LIBRARY_DIR) $(LIBRARIES)  $(LD_FLAGS) $(OBJECTS)
+	@echo "Linked OK"
+
+$(OBJECTS): $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
+	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_DIR) $(LD_FLAGS)
+	@echo "Compiled OK"
+
+.PHONEY: clean
+clean:
+	rm -f $(OBJECTS)
+	
+.PHONEY: remove
+remove: clean
+	@$(rm) $(BIN_DIR)/$(TARGET)
+
+.PHONEY: list
+list:
+	@echo $(SOURCES)
